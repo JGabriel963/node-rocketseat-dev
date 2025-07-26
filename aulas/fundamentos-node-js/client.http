@@ -6,3 +6,23 @@ GET {{baseUrl}}/users
 
 ###
 POST {{baseUrl}}/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "John",
+    "email": "johndoe@gmail.com"
+}
+
+###
+DELETE {{baseUrl}}/users/81996e45-f1ae-41cd-8f2a-2f223dfb521a
+
+###
+PUT {{baseUrl}}/users/3001260a-a7f9-4f82-b63e-c92ec4f86086
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Maria",
+    "email": "johndoe@gmail.com"
+}

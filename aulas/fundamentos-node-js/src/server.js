@@ -1,31 +1,32 @@
 import http from "node:http";
+import { json } from "./middliewares/json.js";
+import { routes } from "./routes.js";
+import { extractQueryParams } from "./utils/extract-query-params.js";
 
-const users = [];
-
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const { method, url } = req;
 
-  if (method === "GET" && url === "/users") {
-    return res
-      .setHeader("Content-type", "application/json")
-      .end(JSON.stringify(users));
-  }
+  await json(req, res);
 
-  if (method === "POST" && url === "/users") {
-    const newId = users.length > 0 ? users[users.length - 1].id + 1 : 0;
+  const route = routes.find((route) => {
+    return route.method === method && route.path.test(url);
+  });
 
-    users.push({
-      id: newId,
-      name: "John Doe",
-      email: "johndoe@gmail.com",
-    });
+  if (route) {
+    const routeParams = req.url.match(route.path);
 
-    return res.writeHead(201).end();
+    const { query, ...params } = routeParams.groups;
+
+    req.params = params;
+    req.query = query ? extractQueryParams(query) : {};
+    return route.handler(req, res);
   }
 
   return res.writeHead(404).end();
 });
 
-server.listen(3333, () => {
-  console.log("Opaaaaa!");
+const PORT = 3333;
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
