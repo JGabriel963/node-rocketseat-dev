@@ -1,0 +1,22 @@
+# Variables
+@baseUrl = http://localhost:3333
+
+###
+GET {{baseUrl}}/transactions
+
+###
+GET {{baseUrl}}/transactions/47e642cf-d326-4805-8c12-c6525c432a9b
+
+###
+GET {{baseUrl}}/transactions/summary
+
+###
+POST {{baseUrl}}/transactions
+Accept: application/json
+Content-Type: application/json
+
+{
+    "title": "Site 2",
+    "amount": 4000,
+    "type": "credit"
+}
