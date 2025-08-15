@@ -1,0 +1,28 @@
+{
+  "name": "desafia-task-api-csv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "drizzle-kit": "^0.31.4",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.11",
+    "csv-generate": "^4.5.0",
+    "csv-parse": "^6.1.0",
+    "dotenv": "^17.2.1",
+    "drizzle-orm": "^0.44.4",
+    "fastify": "^5.5.0",
+    "zod": "^4.0.17"
+  }
+}
