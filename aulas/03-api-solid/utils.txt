@@ -1,0 +1,15 @@
+## Rodar banco postgres pelo terminal
+
+docker run --name api-solid-pg -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=api-solid -e POSTGRES_USER=postgres -p 5432:5432 bitname/postgres
+
+## Ver container
+docker ps OU docker ps -a
+
+## Start container
+docker start api-solid-pg/ID do container
+
+## Stop container
+docker stop api-solid-pg/ID do container
+
+## Deletar container
+docker rm api-solid-pg/ID do container
