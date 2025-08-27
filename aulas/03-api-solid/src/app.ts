@@ -1,32 +1,24 @@
 import fastify from "fastify";
-import z from "zod";
-import { prisma } from "./lib/prisma";
+import { appRoutes } from "./http/routes";
+import { ZodError } from "zod";
+import { env } from "./env";
 
 export const app = fastify();
 
-app.get("/heatly", (request, reply) => {
-  return reply.status(200).send({
-    message: "Ok",
-  });
-});
+app.register(appRoutes);
 
-app.post("/users", async (request, reply) => {
-  console.log("Passou");
-  const registerBodySchema = z.object({
-    name: z.string(),
-    email: z.email(),
-    password: z.string().min(6),
-  });
+app.setErrorHandler((error, _, reply) => {
+  if (error instanceof ZodError) {
+    return reply
+      .status(400)
+      .send({ message: "Validation error.", issues: error.format() });
+  }
 
-  const { name, email, password } = registerBodySchema.parse(request.body);
+  if (env.NODE_ENV !== "production") {
+    console.log(error);
+  } else {
+    // TODO: Here we should log to an external tool like DataDog/NewRelic/Sentry
+  }
 
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password_hash: password,
-    },
-  });
-
-  return reply.status(201).send();
+  return reply.status(500).send({ message: "Internal server error." });
 });
