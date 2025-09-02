@@ -1,0 +1,13 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Meu primeiro projeto Node.js",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [],
+  "author": "João Gabriel",
+  "license": "ISC",
+  "type": "module"
+}
