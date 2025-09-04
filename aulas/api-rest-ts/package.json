@@ -1,0 +1,21 @@
+{
+  "name": "api-rest-ts",
+  "version": "1.0.0",
+  "description": "Criando API REST com Node.js",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "author": "João Gabriel",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
