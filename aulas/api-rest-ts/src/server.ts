@@ -1,15 +1,19 @@
-import express from "express";
-import { myMiddleware } from "./middlewares/my-middleware";
+import express, { NextFunction, Request, Response } from "express";
+import { routes } from "./routes";
+import { AppError } from "./utils/app-erro";
 
 const app = express();
+const PORT = 3333;
 
 app.use(express.json());
+app.use(routes);
 
-app.get("/", myMiddleware, (request, response) => {
-  return response.status(200).json({ message: "Hello World" });
+app.use((error: any, request: Request, response: Response, _: NextFunction) => {
+  if (error instanceof AppError) {
+    return response.status(error.statusCode).json({ message: error.message });
+  }
+  response.status(500).json({ message: error.message });
 });
-
-const PORT = 3333;
 
 app.listen(PORT, () => {
   console.log(`Server is running at ${PORT}`);
