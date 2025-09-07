@@ -1,0 +1,23 @@
+npm run knex -- migrate:make create-courses
+npm run knex -- migrate:latest
+
+// Listar migrations
+npm run knex -- migrate:list
+
+// Desfazer migration específica
+npm run knex -- migrate:down nome-da-migration
+
+// Fazer migration específica
+npm run knex -- migrate:up nome-da-migration    
+
+// Desfazer última migration
+npm run knex -- migrate:rollback
+
+// Desfazer todas as migrations
+npm run knex -- migrate:rollback --all
+
+// Criar seed
+npm run knex -- seed:make nome-da-seed
+
+// Executar seed
+npm run knex -- seed:run nome-da-seed (opcional)
