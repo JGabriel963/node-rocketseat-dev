@@ -6,5 +6,6 @@ const tablesSessionsController = new TablesSessionController();
 
 tablesSessionRoutes.get("/", tablesSessionsController.index);
 tablesSessionRoutes.post("/", tablesSessionsController.create);
+tablesSessionRoutes.patch("/:id", tablesSessionsController.update);
 
 export { tablesSessionRoutes };
