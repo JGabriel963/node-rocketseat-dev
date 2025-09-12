@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: "bitname/postgres:latest"
+    image: "bitnami/postgresql:latest"
     ports:
       - "5432:5432"
     environment:
