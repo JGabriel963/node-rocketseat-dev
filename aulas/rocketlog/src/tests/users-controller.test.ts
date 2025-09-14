@@ -1,0 +1,47 @@
+import { afterAll, describe, expect, it } from "vitest";
+import request from "supertest";
+import { app } from "../app";
+import { prisma } from "@/database/prisma";
+
+describe("UserController", () => {
+  let user_id: string;
+
+  afterAll(async () => {
+    await prisma.user.delete({ where: { id: user_id } });
+  });
+
+  it("", async () => {
+    const response = await request(app).post("/users").send({
+      name: "test",
+      email: "test@gmail.com",
+      password: "password123",
+    });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.name).toBe("test");
+    expect(response.body.email).toBe("test@gmail.com");
+
+    user_id = response.body.id;
+  });
+
+  it("Should throw an error if user with same email already exists", async () => {
+    const response = await request(app).post("/users").send({
+      name: "test",
+      email: "test@gmail.com",
+      password: "password123",
+    });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("User with same email already exists");
+  });
+
+  it("Should throw a validation error if email is invalid", async () => {
+    const response = await request(app).post("/users").send({
+      ame: "test",
+      email: "invalid-email",
+      password: "password123",
+    });
+
+    expect(response.status).toBe(400);
+  });
+});
