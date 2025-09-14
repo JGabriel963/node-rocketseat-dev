@@ -1,6 +1,7 @@
 import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/app-error";
 import { Request, Response } from "express";
+import { hash } from "bcrypt";
 import z from "zod";
 
 export class UsersController {
@@ -24,11 +25,13 @@ export class UsersController {
       throw new AppError("User already exists");
     }
 
+    const hashedPassword = await hash(password, 8);
+
     await prisma.user.create({
       data: {
         name,
         email,
-        password,
+        password: hashedPassword,
         role: role || "member",
       },
     });
