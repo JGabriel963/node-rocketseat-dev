@@ -1,0 +1,4 @@
+npm outdated/out -> Ver dependências que estão desatualizadas
+npx npm-check-updates -> Mesmo de cima
+npx npm-check-updates -u -> Verificar e atualizar
+npx npm-check-updates --interactive --format group
