@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  member
+}
+
+model User {
+  id  String @id @default(uuid())
+  name String @db.VarChar(100)
+  email String @db.VarChar(150) @unique
+  password String @db.VarChar(255)
+
+  role Role @default(member)
+
+  teams TeamMember[]
+  tasks Task[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Team {
+  id String @id @default(uuid())
+  name String @db.VarChar(100)
+  description String?
+
+  members TeamMember[]
+  tasks Task[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id String @id @default(uuid())
+  
+  userId String @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  teamId String @map("team_id")
+  team Team @relation(fields: [teamId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("team_members")
+}
+
+enum TaskStatus {
+  pending
+  in_progress
+  completed
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
+}
+
+
+model Task {
+  id String @id @default(uuid())
+  title String @db.VarChar(200)
+  description String?
+  status TaskStatus @default(pending)
+  priority TaskPriority @default(low)
+
+  assignedId String @map("assigned_id")
+  assigned User @relation(fields: [assignedId], references: [id])
+
+  teamId String @map("team_id")
+  team Team @relation(fields: [teamId], references: [id])
+
+   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tasks")
+
+}
