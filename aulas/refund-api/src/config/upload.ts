@@ -22,7 +22,17 @@ const MULTER = {
       return callback(null, fileName);
     },
   }),
-};
+  // limits: {
+  //   fileSize: MAX_FILE_SIZE,
+  // },
+  // fileFilter(req, file, callback) {
+  //   if (ACCEPTED_IMAGE_TYPES.includes(file.mimetype)) {
+  //     callback(null, true);
+  //   } else {
+  //     callback(new Error("Invalid file type"));
+  //   }
+  // },
+} satisfies multer.Options;
 
 export default {
   TMP_FOLDER,
