@@ -13,6 +13,6 @@ routes.use("/sessions", sessionsRoutes);
 
 // Rotas privadas
 routes.use(ensureAuthenticated);
-routes.use("/refunds", verifyUserAuthorization(["employee"]), refundsRoutes);
+routes.use("/refunds", refundsRoutes);
 
 export { routes };
