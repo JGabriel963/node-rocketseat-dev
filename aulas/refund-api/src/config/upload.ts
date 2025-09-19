@@ -3,7 +3,8 @@ import path from "node:path";
 import { randomBytes } from "node:crypto";
 
 const TMP_FOLDER = path.resolve(__dirname, "..", "..", "tmp");
-const UPLOADS_FOLDER = path.relative(TMP_FOLDER, "uploads");
+// const UPLOADS_FOLDER = path.relative(TMP_FOLDER, "uploads");
+const UPLOADS_FOLDER = path.resolve(__dirname, "..", "..", "tmp", "uploads");
 
 // 1KB = 1024 Bytes
 // 1MB = 1024 * 1024
