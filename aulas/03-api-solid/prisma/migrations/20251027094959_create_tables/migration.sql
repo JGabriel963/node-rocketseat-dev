@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "public"."users" (
+CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE "public"."users" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."check_ins" (
+CREATE TABLE "check_ins" (
     "id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "validated_at" TIMESTAMP(3),
@@ -19,7 +19,7 @@ CREATE TABLE "public"."check_ins" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."gyms" (
+CREATE TABLE "gyms" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -31,4 +31,4 @@ CREATE TABLE "public"."gyms" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

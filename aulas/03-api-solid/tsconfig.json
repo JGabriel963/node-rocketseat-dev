@@ -4,16 +4,16 @@
     // File Layout
     // "rootDir": "./src",
     // "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
     "types": [],
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -39,7 +39,6 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
