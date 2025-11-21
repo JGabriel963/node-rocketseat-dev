@@ -2,9 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { RegisterUserCase } from "../../use-cases/register";
+import { RegisterUserCase } from "../../../use-cases/register";
 import { PrismaUsersRepository } from "@/respositories/prisma/prisma-users-repository";
-import { UserAlreadyExistsError } from "../../use-cases/erros/user-already-exists-error";
+import { UserAlreadyExistsError } from "../../../use-cases/erros/user-already-exists-error";
 import { makeRegisterUseCase } from "@/use-cases/factories/make-register-use-case";
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
