@@ -1,0 +1,10 @@
+{
+  "name": "debug-project",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "packageManager": "pnpm@10.24.0"
+}
