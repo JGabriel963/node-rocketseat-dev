@@ -1,0 +1,6 @@
+POST http://localhost:3333/generate
+content-type: application/json
+
+{
+    "message": "Café da manhã saudável"
+}
