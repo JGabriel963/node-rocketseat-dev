@@ -45,6 +45,25 @@ const tools: ChatCompletionTool[] = [
   },
 ];
 
+const generateCompletiion = async (
+  messages: ChatCompletionMessageParam[],
+  format: any,
+) => {
+  const completion = await client.chat.completions.parse({
+    model: "gpt-4o-mini",
+    max_completion_tokens: 100,
+    response_format: format,
+    tools,
+    messages,
+  });
+
+  if (completion.choices[0].message.refusal) {
+    throw new Error("Refusal");
+  }
+
+  return completion;
+};
+
 export const generateProducts = async (message: string) => {
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -58,17 +77,10 @@ export const generateProducts = async (message: string) => {
     },
   ];
 
-  const completion = await client.chat.completions.parse({
-    model: "gpt-4o-mini",
-    max_completion_tokens: 100,
-    response_format: zodResponseFormat(schema, "produtos_schema"),
-    tools,
+  const completion = await generateCompletiion(
     messages,
-  });
-
-  if (completion.choices[0].message.refusal) {
-    throw new Error("Refusal");
-  }
+    zodResponseFormat(schema, "produtos_schema"),
+  );
 
   const { tool_calls } = completion.choices[0].message;
 
@@ -85,7 +97,19 @@ export const generateProducts = async (message: string) => {
     if (!functionToCall) {
       throw new Error("Function not found");
     }
-    const result = functionToCall(tool_call.function.parsed_arguments);
+    const result = functionToCall();
+    messages.push(completion.choices[0].message);
+    messages.push({
+      role: "tool",
+      tool_call_id: tool_call.id,
+      content: result.toString(),
+    });
+
+    const completion2 = await generateCompletiion(
+      messages,
+      zodResponseFormat(schema, "produtos_schema"),
+    );
+    return completion2.choices[0].message.parsed;
   }
 
   return completion.choices[0].message.parsed;
