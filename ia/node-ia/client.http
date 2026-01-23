@@ -4,3 +4,31 @@ content-type: application/json
 {
     "message": "Café da manhã saudável"
 }
+
+###
+POST http://localhost:3333/embedding
+content-type: application/json
+
+{
+    "input": "One Piece"
+}
+
+###
+POST http://localhost:3333/embeddings
+content-type: application/json
+
+###
+POST http://localhost:3333/cart
+content-type: application/json
+
+{
+    "message": "Feijoada"
+}
+
+###
+POST http://localhost:3333/response
+content-type: application/json
+
+{
+    "input": "Feijoada"
+}
