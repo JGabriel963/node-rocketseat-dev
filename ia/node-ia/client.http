@@ -30,5 +30,25 @@ POST http://localhost:3333/response
 content-type: application/json
 
 {
-    "input": "Feijoada"
+    "input": "Arrumadinho"
+}
+
+###
+POST http://localhost:3333/upload
+content-type: application/json
+
+###
+POST http://localhost:3333/vector-store
+content-type: application/json
+
+###
+POST http://localhost:3333/embeddings-batch
+content-type: application/json
+
+###
+POST http://localhost:3333/embeddings-batch/results
+content-type: application/json
+
+{
+    "id": "batch_6978ee596fbc819084e6a8c621dbe3be"
 }

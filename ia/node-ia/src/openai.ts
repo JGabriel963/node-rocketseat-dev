@@ -12,10 +12,10 @@ import {
   setarEmbedding,
   todosProdutos,
 } from "./database";
-import {
-  ResponseCreateParams,
-  ResponseCreateParamsNonStreaming,
-} from "openai/resources/responses/responses.mjs";
+import { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses.mjs";
+import { ReadStream } from "node:fs";
+import { writeFile } from "node:fs/promises";
+import path from "node:path";
 
 const client = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
@@ -166,8 +166,136 @@ export const generateCart = async (input: string, products: string[]) => {
     model: "gpt-4.1-nano",
     instructions: `Retorne um  lista  de até 5 produtos que satisfaça a necessidade do usuário. Os produtos disponíveis são os seguintes ${JSON.stringify(products)}`,
     input,
+    tools: [
+      {
+        type: "file_search",
+        vector_store_ids: ["vs_6973a21366008191beabf649ca5f0eb4"],
+      },
+    ],
     text: {
       format: zodTextFormat(schema, "carrinho"),
     },
   });
 };
+
+export const uploadFile = async (file: ReadStream) => {
+  const uploaded = await client.files.create({
+    file,
+    purpose: "assistants",
+  });
+
+  console.log(uploaded, { depth: null });
+};
+
+export const createVector = async () => {
+  const vectorStore = await client.vectorStores.create({
+    name: "node-ia",
+    file_ids: ["file-QfDC8EdW1GusVwpSffa3ng"],
+  });
+
+  console.log(vectorStore, { depth: null });
+};
+
+export const createEmbeddingBatchFile = async (products: string[]) => {
+  const content = products
+    .map((p, i) => ({
+      custom_id: String(i),
+      method: "POST",
+      url: "/v1/embeddings",
+      body: {
+        input: p,
+        model: "text-embedding-3-small",
+        encoding_format: "float",
+      },
+    }))
+    .map((p) => JSON.stringify(p))
+    .join("\n");
+
+  const file = new File([content], "embeddings-batch.jsonl");
+  const uploaded = await client.files.create({
+    file,
+    purpose: "batch",
+  });
+
+  return uploaded;
+
+  // await writeFile(path.join(__dirname, "file.jsonl"), content);
+};
+
+export const createEmbeddingsBatch = async (fileId: string) => {
+  const batch = await client.batches.create({
+    input_file_id: fileId,
+    endpoint: "/v1/embeddings",
+    completion_window: "24h",
+  });
+
+  return batch;
+};
+
+export const getBatch = async (id: string) => {
+  return await client.batches.retrieve(id);
+};
+
+export const getFileContent = async (id: string) => {
+  const response = await client.files.content(id);
+
+  return response.text();
+};
+
+export const processEmbeddingsBatchResult = async (batchId: string) => {
+  const batch = await getBatch(batchId);
+  if (batch.status !== "completed" || !batch.output_file_id) {
+    return null;
+  }
+
+  const content = await getFileContent(batch.output_file_id);
+  return content
+    .split("\n")
+    .map((line) => {
+      try {
+        const parsed = JSON.parse(line) as {
+          custom_id: string;
+          response: { body: { data: { embedding: number[] }[] } };
+        };
+        return {
+          id: Number(parsed.custom_id),
+          embeddings: parsed.response.body.data[0].embedding,
+        };
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    })
+    .filter((r): r is { id: number; embeddings: number[] } => Boolean(r));
+};
+
+// client.vectorStores.files
+//   .list("vs_6973a21366008191beabf649ca5f0eb4")
+//   .then((res) => console.dir(res.data, { depth: null }));
+
+// {
+//   object: 'file',
+//   id: 'file-QfDC8EdW1GusVwpSffa3ng',
+//   purpose: 'assistants',
+//   filename: 'recipes.md',
+//   bytes: 2722,
+//   created_at: 1769185338,
+//   expires_at: null,
+//   status: 'processed',
+//   status_details: null
+// } { depth: null }
+
+// {
+//   id: 'vs_6973a21366008191beabf649ca5f0eb4',
+//   object: 'vector_store',
+//   created_at: 1769185811,
+//   name: 'node-ia',
+//   description: null,
+//   usage_bytes: 0,
+//   file_counts: { in_progress: 1, completed: 0, failed: 0, cancelled: 0, total: 1 },
+//   status: 'in_progress',
+//   expires_after: null,
+//   expires_at: null,
+//   last_active_at: 1769185811,
+//   metadata: {}
+// } { depth: null }
