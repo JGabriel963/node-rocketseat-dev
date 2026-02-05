@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { z } from "zod";
+import { string, z } from "zod";
 import OpenAI from "openai";
 import { zodResponseFormat, zodTextFormat } from "openai/helpers/zod";
 import {
@@ -152,30 +152,50 @@ export const embeddingProducts = async () => {
   );
 };
 
-export const generateResponse = async (
+export const generateResponse = async <T = null>(
   params: ResponseCreateParamsNonStreaming,
 ) => {
   const response = await client.responses.parse(params);
-  if (response.output_parsed) return response.output_parsed;
+  if (response.output_parsed) return response.output_parsed as T;
 
   return null;
 };
 
+export const createCartPromptChunks = (input: string, products: string[]) => {
+  const chunckSize = 10;
+  const chunks: string[] = [];
+
+  for (let i = 0; i < products.length; i += chunckSize) {
+    chunks.push(
+      `Retorne um  lista  de até 5 produtos que satisfaça a necessidade do usuário. Os produtos disponíveis são os seguintes ${JSON.stringify(products.slice(i, i + chunckSize))}`,
+    );
+  }
+
+  return chunks;
+};
+
 export const generateCart = async (input: string, products: string[]) => {
-  return generateResponse({
-    model: "gpt-4.1-nano",
-    instructions: `Retorne um  lista  de até 5 produtos que satisfaça a necessidade do usuário. Os produtos disponíveis são os seguintes ${JSON.stringify(products)}`,
-    input,
-    tools: [
-      {
-        type: "file_search",
-        vector_store_ids: ["vs_6973a21366008191beabf649ca5f0eb4"],
+  const promisses = createCartPromptChunks(input, products).map((chunk) => {
+    return generateResponse<{ produtos: string[] }>({
+      model: "gpt-4.1-nano",
+      instructions: chunk,
+      input,
+      tools: [
+        {
+          type: "file_search",
+          vector_store_ids: ["vs_6973a21366008191beabf649ca5f0eb4"],
+        },
+      ],
+      text: {
+        format: zodTextFormat(schema, "carrinho"),
       },
-    ],
-    text: {
-      format: zodTextFormat(schema, "carrinho"),
-    },
+    });
   });
+
+  const results = await Promise.all(promisses);
+  return results
+    .filter((r): r is { produtos: string[] } => Boolean(r))
+    .flatMap((r) => r.produtos);
 };
 
 export const uploadFile = async (file: ReadStream) => {
