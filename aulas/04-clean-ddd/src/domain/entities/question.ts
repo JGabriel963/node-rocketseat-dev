@@ -1,25 +1,64 @@
-import { randomUUID } from "node:crypto";
 import { Slug } from "./values-objects/slug";
+import { Entity } from "../../core/entities/entity";
+import { UniqueEntityID } from "../../core/entities/unique-entity-id";
+import { Optional } from "../../core/types/optional";
+import dayjs from "dayjs";
 
 interface QuestionProps {
+  authorId: UniqueEntityID;
+  bestAnswerId?: UniqueEntityID;
   title: string;
   content: string;
   slug: Slug;
-  authorId: string;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
-export class Question {
-  public id: string;
-  public title: string;
-  public slug: Slug;
-  public content: string;
-  public authorId: string;
+export class Question extends Entity<QuestionProps> {
+  get authorId() {
+    return this.props.authorId;
+  }
 
-  constructor(props: QuestionProps, id?: string) {
-    this.id = id ?? randomUUID();
-    this.title = props.title;
-    this.content = props.content;
-    this.authorId = props.authorId;
-    this.slug = props.slug;
+  get bestAnswerId() {
+    return this.props.bestAnswerId;
+  }
+
+  get title() {
+    return this.props.title;
+  }
+
+  get content() {
+    return this.props.content;
+  }
+
+  get slug() {
+    return this.props.slug;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
+
+  get isNew(): boolean {
+    return dayjs().diff(this.createdAt, "days") <= 3;
+  }
+
+  static create(
+    props: Optional<QuestionProps, "createdAt">,
+    id?: UniqueEntityID,
+  ) {
+    const question = new Question(
+      {
+        ...props,
+        createdAt: new Date(),
+      },
+      id,
+    );
+
+    return question;
   }
 }
