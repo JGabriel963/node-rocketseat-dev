@@ -2,8 +2,8 @@ import { expect, describe, it, beforeEach } from "vitest";
 
 import { DeleteAnswerUseCase } from "./delete-answer";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { InMemoryAnswersRepository } from "../../../../../test/repositories/in-memory-answers-respository";
-import { makeAnswer } from "../../../../../test/factories/make-answer";
+import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-respository";
+import { makeAnswer } from "test/factories/make-answer";
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
 let sut: DeleteAnswerUseCase;

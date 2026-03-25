@@ -3,7 +3,7 @@ import { expect, describe, it, beforeEach } from "vitest";
 import { makeAnswer } from "../../../../../test/factories/make-answer";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { EditAnswerUseCase } from "./edit-answer";
-import { InMemoryAnswersRepository } from "../../../../../test/repositories/in-memory-answers-respository";
+import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-respository";
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
 let sut: EditAnswerUseCase;
