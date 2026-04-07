@@ -41,6 +41,10 @@ export class Question extends AggregateRoot<QuestionProps> {
     return this.props.attachments;
   }
 
+  set attachments(attachments: QuestionAttachment[]) {
+    this.props.attachments = attachments;
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -71,6 +75,10 @@ export class Question extends AggregateRoot<QuestionProps> {
   set content(content: string) {
     this.props.content = content;
     this.touch();
+  }
+
+  set attactments(attachments: QuestionAttachment[]) {
+    this.props.attachments = attachments;
   }
 
   set bestAnswerId(bestAnswerId: UniqueEntityID | undefined) {
