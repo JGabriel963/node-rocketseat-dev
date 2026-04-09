@@ -3,7 +3,7 @@ import { DeleteAnswerCommentUseCase } from "@/domain/forum/application/use-cases
 import { makeAnswerComment } from "test/factories/make-answer-comment";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NotAllowedError } from "./errors/not-allowed-error";
+import { NotAllowedError } from "../../../../core/errors/not-allowed-error";
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository;
 let sut: DeleteAnswerCommentUseCase;
