@@ -33,3 +33,10 @@ Authorization: Bearer {{authToken}}
     "title": "Qual é a sua cor favorita?",
     "content": "Qual é a sua cor favorita?"
 }
+
+###
+
+# @name fetch_recent_questions
+GET {{baseUrl}}/questions
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
