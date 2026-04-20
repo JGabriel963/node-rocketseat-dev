@@ -1,11 +1,11 @@
 import request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { AppModule } from "@/app.module";
-import { PrismaService } from "@/prisma/prisma.service";
+import { AppModule } from "@/infra/app.module";
+import { PrismaService } from "@/infra/database/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 
-describe("Fetch recent questions (E2E)", () => {
+describe("Create question (E2E)", () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let jwt: JwtService;
@@ -27,7 +27,7 @@ describe("Fetch recent questions (E2E)", () => {
     await app.close();
   });
 
-  test("[GET] /questions", async () => {
+  test("[POST] /questions", async () => {
     const user = await prisma.user.create({
       data: {
         name: "John Doe",
@@ -38,34 +38,22 @@ describe("Fetch recent questions (E2E)", () => {
 
     const accessToken = jwt.sign({ sub: user.id });
 
-    await prisma.question.createMany({
-      data: [
-        {
-          title: "Question 1",
-          content: "Content 1",
-          slug: "question-1",
-          authorId: user.id,
-        },
-        {
-          title: "Question 2",
-          content: "Content 2",
-          slug: "question-2",
-          authorId: user.id,
-        },
-      ],
-    });
-
     const response = await request(app.getHttpServer())
-      .get("/questions")
+      .post("/questions")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send();
+      .send({
+        title: "New question",
+        content: "New question content",
+      });
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({
-      questions: expect.arrayContaining([
-        expect.objectContaining({ title: "Question 1" }),
-        expect.objectContaining({ title: "Question 2" }),
-      ]),
+    expect(response.statusCode).toBe(201);
+
+    const questionOnDatabase = await prisma.question.findFirst({
+      where: {
+        slug: "new-question",
+      },
     });
+
+    expect(questionOnDatabase).toBeTruthy();
   });
 });
