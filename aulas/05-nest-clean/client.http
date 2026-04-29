@@ -30,8 +30,8 @@ content-type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-    "title": "Qual é 1 + 1?",
-    "content": "Qual é 1 + 1?"
+    "title": "Qual é 2 + 2?",
+    "content": "Qual é 2 + 2?"
 }
 
 ###

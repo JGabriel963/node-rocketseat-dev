@@ -2,23 +2,22 @@ import "dotenv/config";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "generated/prisma/client";
-import { ConfigService } from "@nestjs/config";
-import { Env } from "@/infra/env";
+import { EnvService } from "@/infra/env/env.service";
 
 @Injectable()
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  constructor(config: ConfigService<Env, true>) {
-    const connectionString = config.get("DATABASE_URL", { infer: true });
+  constructor(config: EnvService) {
+    const connectionString = config.get("DATABASE_URL");
 
     const url = new URL(connectionString);
     const schema = url.searchParams.get("schema") ?? "public";
 
     const adapter = new PrismaPg(
       {
-        connectionString: config.get("DATABASE_URL", { infer: true }),
+        connectionString: config.get("DATABASE_URL"),
       },
       { schema },
     );
