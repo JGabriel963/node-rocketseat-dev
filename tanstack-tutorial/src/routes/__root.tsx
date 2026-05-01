@@ -3,6 +3,9 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import appCss from '../styles.css?url'
 import { ThemeProvider } from '#/components/web/theme-provider'
 
+import { Toaster } from '#/components/ui/sonner'
+import { TooltipProvider } from '#/components/ui/tooltip'
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -25,6 +28,7 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: () => <div>Not found</div>,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -34,7 +38,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster closeButton position="top-center" />
+        </ThemeProvider>
         {/* <TanStackDevtools
           config={{
             position: 'bottom-right',
