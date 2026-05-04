@@ -4,7 +4,7 @@ import * as React from 'react'
 
 // import { NavMain } from '#/components/web/nav-main'
 import { NavPrimary, type NavPrimaryProps } from '#/components/web/nav-primary'
-import { NavUser } from '#/components/web/nav-user'
+import { NavUser, type NavUserProps } from '#/components/web/nav-user'
 // import { TeamSwitcher } from '#/components/web/team-switcher'
 import {
   Sidebar,
@@ -31,7 +31,7 @@ import {
   ImportIcon,
   CompassIcon,
 } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Link, linkOptions } from '@tanstack/react-router'
 
 // This is sample data.
 const data = {
@@ -163,27 +163,30 @@ const data = {
   ],
 }
 
-const navItems: NavPrimaryProps['items'] = [
+const navItems: NavPrimaryProps['items'] = linkOptions([
   {
     title: 'Items',
-    to: '/dashboard/items',
     icon: BookmarkIcon,
+    to: '/dashboard/items',
+    activeOptions: { exact: false },
   },
   {
     title: 'Import',
-    to: '/dashboard/import',
     icon: ImportIcon,
+    to: '/dashboard/import',
+    activeOptions: { exact: false },
   },
   {
     title: 'Discover',
-    to: '/dashboard/discover',
     icon: CompassIcon,
+    to: '/dashboard/discover',
+    activeOptions: { exact: false },
   },
-]
+])
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ user }: NavUserProps) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         {/* <TeamSwitcher teams={data.teams} /> */}
         <SidebarMenu>
@@ -207,7 +210,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavPrimary items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -15,6 +15,9 @@ export interface NavPrimaryProps {
     title: string
     to: string
     icon: LucideIcon
+    activeOptions: {
+      exact?: boolean
+    }
   }[]
 }
 
@@ -24,12 +27,18 @@ export function NavPrimary({ items }: NavPrimaryProps) {
   return (
     <SidebarGroup>
       <SidebarGroupContent>
-        <SidebarMenu>
+        <SidebarMenu className="gap-1">
           {items.map((item, index) => {
             return (
               <SidebarMenuSubItem key={`${item.title}-${index}`}>
                 <SidebarMenuButton asChild size="sm">
-                  <Link to={item.to}>
+                  <Link
+                    to={item.to}
+                    activeProps={{
+                      'data-active': true,
+                    }}
+                    activeOptions={item.activeOptions}
+                  >
                     <item.icon />
                     <span>{item.title}</span>
                   </Link>

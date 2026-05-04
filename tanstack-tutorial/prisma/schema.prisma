@@ -24,6 +24,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  savedItems    SavedItem[]
 
   @@unique([email])
   @@map("user")
@@ -75,4 +76,31 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model SavedItem {
+  id String @id @default(uuid())
+  url String
+  title String?
+  content String?
+  summary String?
+  tags String[]
+  author String?
+  status ItemStatus @default(PENDING)
+  publishedAt DateTime?
+  ogImage String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("saved_items")
+}
+
+enum ItemStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 }

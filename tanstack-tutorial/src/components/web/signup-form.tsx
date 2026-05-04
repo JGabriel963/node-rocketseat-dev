@@ -19,9 +19,11 @@ import { useForm } from '@tanstack/react-form'
 import { signupSchema } from '#/schemas/auth'
 import { authClient } from '#/lib/auth-client'
 import { toast } from 'sonner'
+import { useTransition } from 'react'
 
 export function SignupForm() {
   const navigate = useNavigate()
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm({
     defaultValues: {
@@ -33,23 +35,25 @@ export function SignupForm() {
     validators: {
       onSubmit: signupSchema,
     },
-    onSubmit: async ({ value }) => {
-      await authClient.signUp.email({
-        name: value.fullName,
-        email: value.email,
-        password: value.password,
-        // callbackURL: '/dashboard',
-        fetchOptions: {
-          onSuccess() {
-            toast.success('Account creates successfully!')
-            navigate({
-              to: '/',
-            })
+    onSubmit: ({ value }) => {
+      startTransition(async () => {
+        await authClient.signUp.email({
+          name: value.fullName,
+          email: value.email,
+          password: value.password,
+          callbackURL: '/dashboard',
+          fetchOptions: {
+            onSuccess() {
+              toast.success('Account creates successfully!')
+              navigate({
+                to: '/dashboard',
+              })
+            },
+            onError({ error }) {
+              toast.error(error.message)
+            },
           },
-          onError({ error }) {
-            toast.error(error.message)
-          },
-        },
+        })
       })
     },
   })
@@ -85,6 +89,7 @@ export function SignupForm() {
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      disabled={isPending}
                       placeholder="John Doe"
                       autoComplete="off"
                     />
@@ -111,6 +116,7 @@ export function SignupForm() {
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      disabled={isPending}
                     />
                     <FieldDescription>
                       We&apos;ll use this to contact you. We will not share your
@@ -139,6 +145,7 @@ export function SignupForm() {
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      disabled={isPending}
                       placeholder="********"
                     />
                     <FieldDescription>
@@ -169,6 +176,7 @@ export function SignupForm() {
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      disabled={isPending}
                       placeholder="********"
                     />
                     <FieldDescription>
@@ -184,8 +192,10 @@ export function SignupForm() {
             />
             <FieldGroup>
               <Field>
-                <Button type="submit">Create Account</Button>
-                <Button variant="outline" type="button">
+                <Button type="submit" disabled={isPending}>
+                  Create Account
+                </Button>
+                <Button variant="outline" type="button" disabled={isPending}>
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">
