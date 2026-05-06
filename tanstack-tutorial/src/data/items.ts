@@ -1,28 +1,64 @@
 import { prisma } from '#/db'
-import { importSchema } from '#/schemas/import'
+import { firecrawl } from '#/lib/firecrawl'
+import { extractSchema, importSchema } from '#/schemas/import'
 import { createServerFn } from '@tanstack/react-start'
+import type z from 'zod'
+import { getSessionFn } from './session'
 
 export const scrapeUrlFn = createServerFn({ method: 'POST' })
   .inputValidator(importSchema)
   .handler(async ({ data }) => {
     const { url } = data
 
+    const user = await getSessionFn()
+
     const item = await prisma.savedItem.create({
       data: {
         url: data.url,
-        userId: 'afaf',
+        userId: user.user.id,
         status: 'PROCESSING',
       },
     })
 
-    // const result = await firecrawl.scrape(url, {
-    //   formats: ['markdown'],
-    //   onlyMainContent: true,
-    // })
+    try {
+      const result = await firecrawl.scrape(url, {
+        formats: [
+          'markdown',
+          {
+            type: 'json',
+            schema: extractSchema,
+          },
+        ],
+        onlyMainContent: true,
+      })
 
-    const result = {
-      url,
+      const jsonData = result.json as z.infer<typeof extractSchema>
+
+      const updatedItem = await prisma.savedItem.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          title: result.metadata?.title,
+          content: result.markdown,
+          ogImage: result.metadata?.ogImage,
+          author: jsonData.author,
+          publishedAt: jsonData.publishedAt,
+          status: 'COMPLETED',
+        },
+      })
+
+      return updatedItem
+    } catch {
+      const failedItem = await prisma.savedItem.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          status: 'FAILED',
+        },
+      })
+
+      return failedItem
     }
-
-    console.log(result)
   })
