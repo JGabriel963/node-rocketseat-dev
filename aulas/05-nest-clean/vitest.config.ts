@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     root: "./",
+    hookTimeout: 30000,
   },
   plugins: [
     tsconfigPaths(),
