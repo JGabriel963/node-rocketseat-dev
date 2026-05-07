@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
@@ -16,7 +18,7 @@ export class ProxyService {
     data?: any,
     headers?: any,
     userInfo?: any,
-  ) {
+  ): Promise<any> {
     const service = serviceConfig[serviceName];
     const url = `${service.url}${path}`;
 
@@ -31,8 +33,16 @@ export class ProxyService {
       };
 
       const response = await firstValueFrom(
-        this.httpService.request<any>(method, url),
+        this.httpService.request({
+          method: method.toLowerCase() as any,
+          url,
+          data,
+          headers: enhancedHeaders,
+          timeout: service.timeout,
+        }),
       );
+
+      return response;
     } catch (error) {
       this.logger.error(
         `Error proxying ${method} request to ${serviceName}: ${url}`,
@@ -41,5 +51,19 @@ export class ProxyService {
     }
   }
 
-  async getServiceHealth() {}
+  async getServiceHealth(serviceName: keyof typeof serviceConfig) {
+    try {
+      const service = serviceConfig[serviceName];
+
+      const response = await firstValueFrom(
+        this.httpService.get(`${service.url}/health`, {
+          timeout: 3000,
+        }),
+      );
+
+      return { status: 'healthy', data: response.data };
+    } catch (error) {
+      return { status: 'unhealthy', error: error.message };
+    }
+  }
 }
