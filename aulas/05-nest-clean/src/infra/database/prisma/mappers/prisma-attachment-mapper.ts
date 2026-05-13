@@ -12,7 +12,7 @@ export class PrismaAttachmentMapper {
         title: raw.title,
         url: raw.url,
       },
-      new UniqueEntityID(raw.id),
+      new UniqueEntityID(raw.id as any),
     );
   }
 

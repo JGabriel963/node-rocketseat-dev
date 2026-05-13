@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "generated/prisma/client";
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { DomainEvents } from "@/core/events/domain-events";
 
 function generateUniqueDatabaseURL(schemaId: string) {
   if (!process.env.DATABASE_URL) {
@@ -24,6 +25,8 @@ process.env.DATABASE_URL = databaseURL;
 
 beforeAll(async () => {
   let retries = 10;
+
+  DomainEvents.shouldRun = false;
 
   while (retries > 0) {
     try {
