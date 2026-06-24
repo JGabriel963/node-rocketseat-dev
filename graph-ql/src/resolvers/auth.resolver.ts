@@ -5,7 +5,7 @@ import { AuthService } from "../services/auth.service";
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  private authService = new AuthService();
 
   @Mutation(() => RegisterOutput)
   async register(

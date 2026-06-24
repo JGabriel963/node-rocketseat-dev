@@ -10,6 +10,11 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.14.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  },
   "dependencies": {
     "@apollo/server": "^5.5.1",
     "@as-integrations/express5": "^1.1.2",
@@ -18,7 +23,7 @@
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "graphql": "^17.0.1",
+    "graphql": "^16.12.0",
     "jsonwebtoken": "^9.0.3",
     "reflect-metadata": "^0.2.2",
     "type-graphql": "2.0.0-rc.3"
