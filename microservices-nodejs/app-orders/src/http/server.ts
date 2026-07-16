@@ -7,12 +7,14 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { channels } from "../broker/channels/index.ts";
 import fastifyCors from "@fastify/cors";
+import { trace } from "@opentelemetry/api";
 import { db } from "../db/client.ts";
 import { schema } from "../db/schema/index.ts";
 import { randomUUID } from "node:crypto";
 import { dispatchOrderCreated } from "../broker/messages/order-created.ts";
+import { setTimeout } from "node:timers/promises";
+import { tracer } from "../tracer/tracer.ts";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -44,18 +46,26 @@ app.post(
 
     const orderId = randomUUID();
 
+    await db.insert(schema.orders).values({
+      id: orderId,
+      customerId: "9c0593c3-b51e-4a01-a9d0-b2af4ae95489",
+      amount,
+    });
+
+    const span = tracer.startSpan("eu acho que aqui tá dando merda");
+
+    await setTimeout(2000);
+
+    span.end();
+
+    trace.getActiveSpan()?.setAttribute("order_id", orderId);
+
     dispatchOrderCreated({
       orderId,
       amount,
       customer: {
         id: "9c0593c3-b51e-4a01-a9d0-b2af4ae95489",
       },
-    });
-
-    await db.insert(schema.orders).values({
-      id: orderId,
-      customerId: "9c0593c3-b51e-4a01-a9d0-b2af4ae95489",
-      amount,
     });
 
     return reply.status(201).send();
