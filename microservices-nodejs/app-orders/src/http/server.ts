@@ -27,6 +27,7 @@ app.register(fastifyCors, {
 });
 
 app.get("/health", () => {
+  console.log("API Orders");
   return "Ok";
 });
 

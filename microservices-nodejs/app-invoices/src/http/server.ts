@@ -21,6 +21,7 @@ app.register(fastifyCors, {
 });
 
 app.get("/health", () => {
+  console.log("API Invoices");
   return "Ok";
 });
 

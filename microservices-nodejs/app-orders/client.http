@@ -5,5 +5,5 @@ POST http://localhost:3333/orders
 Content-Type: application/json
 
 {
-    "amount": 10
+    "amount": 5000
 }
