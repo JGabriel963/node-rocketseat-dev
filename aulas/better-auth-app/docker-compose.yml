@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: bitnami/postgresql:17
+    image: soldevelo/postgresql:17
     container_name: bun-auth-postgres
     ports:
       - "5432:5432"
