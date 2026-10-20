@@ -1,6 +1,6 @@
 services:
   invoices-pg:
-    image: bitnami/postgresql:latest
+    image: soldevelo/postgresql:latest
     ports:
       - '5483:5432'
     environment:

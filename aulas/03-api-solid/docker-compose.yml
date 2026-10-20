@@ -1,6 +1,6 @@
 services:
   api-solid-pg:
-    image: bitnami/postgresql
+    image: soldevelo/postgresql
     ports:
       - "5432:5432"
     environment:
